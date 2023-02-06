@@ -17,7 +17,7 @@ HELP_COMPILATION_VARIABLES += \
 "   EXTRA_SIM_SOURCES         = additional simulation sources needed for simulator" \
 "   EXTRA_SIM_REQS            = additional make requirements to build the simulator" \
 "   ENABLE_SBT_THIN_CLIENT    = if set, use sbt's experimental thin client (works best when overridding SBT_BIN with the mainline sbt script)" \
-"   ENABLE_CUSTOM_FIRRTL_PASS = if set, enable custom firrtl passes (SFC lowers to LowFIRRTL & MFC converts to Verilog) \
+"   ENABLE_CUSTOM_FIRRTL_PASS = if set, enable custom firrtl passes (SFC lowers to LowFIRRTL & MFC converts to Verilog)" \
 "   EXTRA_CHISEL_OPTIONS      = additional options to pass to the Chisel compiler" \
 "   EXTRA_FIRRTL_OPTIONS      = additional options to pass to the FIRRTL compiler"
 
@@ -48,6 +48,7 @@ HELP_COMMANDS += \
 "   run-tests                   = run all assembly and benchmark tests" \
 "   launch-sbt                  = start sbt terminal" \
 "   {shutdown,start}-sbt-server = shutdown or start sbt server if using ENABLE_SBT_THIN_CLIENT" \
+"   find-config-fragments       = list all config. fragments and their locations"
 
 #########################################################################################
 # include additional subproject make fragments
@@ -373,8 +374,12 @@ start-sbt-server: check-thin-client
 	cd $(base_dir) && $(SBT) "exit"
 
 #########################################################################################
-# print help text
+# print help text (and other help)
 #########################################################################################
+.PHONY: find-config-fragments
+find-config-fragments: $(SCALA_SOURCES)
+	@$(base_dir)/scripts/config-finder.py $^
+
 .PHONY: help
 help:
 	@for line in $(HELP_LINES); do echo "$$line"; done
